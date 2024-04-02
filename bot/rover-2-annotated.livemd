@@ -8,6 +8,7 @@ Bot.show({1, 1})
 
 ```elixir
 defmodule Rover do
+  # Define a struct which describes the model of the bots state
   defstruct location: {0, 0}, heading: :north, history: []
 
   def new do
@@ -15,15 +16,19 @@ defmodule Rover do
     %__MODULE__{}
   end
 
+  # move the robot forward from current position, record that position
+  # into the head of `history`
   def forward(rover) do
     %{
       rover
-      | history: [rover.location | rover.history],
-        location: move(rover.location, rover.heading)
+      | location: move(rover.location, rover.heading),
+        history: [rover.location | rover.history]
     }
   end
 
   def left(%{heading: h} = rover) do
+    # Based on previous heading, rotate the robot to the
+    # appropriate cardinal direction
     case h do
       :north -> %{rover | heading: :west}
       :west -> %{rover | heading: :south}
@@ -33,11 +38,13 @@ defmodule Rover do
   end
 
   def right(%{heading: h} = rover) do
+    # Based on previous heading, rotate the robot to the
+    # appropriate cardinal direction
     case h do
       :north -> %{rover | heading: :east}
-      :west -> %{rover | heading: :north}
-      :south -> %{rover | heading: :west}
       :east -> %{rover | heading: :south}
+      :south -> %{rover | heading: :west}
+      :west -> %{rover | heading: :north}
     end
   end
 
@@ -45,49 +52,51 @@ defmodule Rover do
     Bot.show(rover)
   end
 
+  # Increment x or y coords of the robot's location given the heading
   defp move({x, y}, :north) do
     {x, y - 1}
-  end
-
-  defp move({x, y}, :south) do
-    {x, y + 1}
   end
 
   defp move({x, y}, :east) do
     {x + 1, y}
   end
 
+  defp move({x, y}, :south) do
+    {x, y + 1}
+  end
+
   defp move({x, y}, :west) do
     {x - 1, y}
   end
+
+  # Same as above functions, but handles via a case block
+  # defp move({ x, y }, heading) do
+  #   case heading do
+  #     :north -> { x, y - 1 }
+  #     :east -> { x + 1, y }
+  #     :south -> { x, y + 1 }
+  #     :west -> { x - 1, y }
+  #   end
+  # end
 end
 ```
 
 ```elixir
 Rover.new()
-|> Rover.forward()
-|> Rover.forward()
 |> Rover.left()
 |> Rover.forward()
 |> Rover.forward()
-|> Rover.left()
 |> Rover.forward()
 |> Rover.forward()
-|> Rover.left()
+|> Rover.right()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.right()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.forward()
+|> Rover.forward()
 |> Rover.forward()
 |> Rover.forward()
 |> Rover.show()
-```
-
-```elixir
-list = [1, 2, 3]
-```
-
-```elixir
-[0 | list]
-```
-
-```elixir
-[_first, second | _rest] = list
-second
 ```

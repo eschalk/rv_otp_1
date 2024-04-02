@@ -1,4 +1,4 @@
-# Untitled notebook
+# Elixir
 
 ## Section
 
@@ -60,8 +60,23 @@ defmodule Rover do
   defp move({x, y}, :west) do
     {x - 1, y}
   end
+
+  def go(rover, string) do
+    case string do
+      "f" -> forward(rover)
+      "r" -> right(rover)
+      "l" -> left(rover)
+    end
+  end
+
+  def all(rover, string) do
+    steps = String.graphemes(string)
+    Enum.reduce(steps, Rover.new(), fn step, acc -> go(acc, step) end)
+  end
 end
 ```
+
+<!-- livebook:{"reevaluate_automatically":true} -->
 
 ```elixir
 Rover.new()
@@ -90,4 +105,13 @@ list = [1, 2, 3]
 ```elixir
 [_first, second | _rest] = list
 second
+```
+
+```elixir
+track = "fffrfffrfff"
+
+Rover.new()
+|> Rover.all(track)
+|> Rover.all(track)
+|> Rover.show()
 ```
